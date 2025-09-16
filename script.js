@@ -349,15 +349,28 @@ function updateSimulator(bgColor, textColor) {
 
     const origRatio = calculateContrast(bgColor, textColor);
     const simRatio = calculateContrast(simBg, simText);
-    const solutionText = document.getElementById('solution-text');
     
-    if (simRatio >= 4.5) {
-        solutionText.innerHTML = `✅ **양호**: 일반 시각(<strong>${origRatio.toFixed(2)}:1</strong>)과 적록색약 시뮬레이션(<strong>${simRatio.toFixed(2)}:1</strong>) 모두 충분한 대비를 확보하여 색상 구분에 문제가 없을 것으로 보입니다.`;
-        solutionText.style.color = '#2e7d32';
-    } else {
-        solutionText.innerHTML = `⚠️ **주의**: 일반 시각에서는 대비율이 <strong>${origRatio.toFixed(2)}:1</strong>로 양호하지만, 적록색약 시뮬레이션 결과 <strong>${simRatio.toFixed(2)}:1</strong>로 낮아져 구분이 어려울 수 있습니다. 명도 차이를 더 확보하거나, 색상 외 다른 시각적 단서(아이콘, 굵기 등) 사용을 권장합니다.`;
-        solutionText.style.color = '#d32f2f';
+    const getStatusText = (ratio, type) => {
+        let grade = '';
+        if (ratio >= 7) grade = 'AAA등급 충족';
+        else if (ratio >= 4.5) grade = 'AA등급 충족';
+        else grade = '기준 미달';
+
+        if (ratio >= 4.5) {
+            return `<p style="color:#2e7d32;">✅ **양호**: ${type}, 명도대비율 <strong>${ratio.toFixed(2)}:1</strong>, ${grade}입니다.</p>`;
+        } else {
+            return `<p style="color:#d32f2f;">⚠️ **주의**: ${type}, 명도대비율 <strong>${ratio.toFixed(2)}:1</strong>로 낮아져 구분이 어려울 수 있습니다.</p>`;
+        }
+    };
+
+    let solutionHTML = getStatusText(origRatio, '일반 시각');
+    solutionHTML += getStatusText(simRatio, '적록색약 시각');
+    
+    if (simRatio < 4.5) {
+        solutionHTML += `<p style="margin-top:10px; font-size: 14px;">명도 차이를 더 확보하거나, 색상 외 다른 시각적 단서(아이콘, 굵기 등) 사용을 권장합니다.</p>`;
     }
+
+    document.getElementById('solution-text').innerHTML = solutionHTML;
 }
 
 
