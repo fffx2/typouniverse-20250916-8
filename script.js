@@ -259,9 +259,9 @@ function displayGeneratedGuide(data) {
     document.getElementById('contrast-description').innerHTML = `Primary 색상 배경 사용 시, 권장 텍스트 색상은 <strong>${data.accessibility.textColorOnPrimary}</strong>이며, 대비는 <strong>${data.accessibility.contrastRatio}</strong>입니다.`;
     
     const typographyHTML = `
-        <p style="margin-bottom: 8px;"><strong>권장 크기:</strong> ${data.typography.bodySize} (본문) / ${data.typography.headlineSize} (제목)</p>
-        <p style="margin-bottom: 8px;"><strong>출처:</strong> ${platformGuide.source}</p>
-        <p style="font-size: 12px; color: #666;"><strong>설명:</strong> ${platformGuide.description}</p>
+        <p style="margin-bottom: 8px;"><strong>텍스트 사이즈</strong> ${data.typography.bodySize} (본문) / ${data.typography.headlineSize} (제목)</p>
+        <p style="margin-bottom: 8px;"> ${platformGuide.source}</p>
+        <p style="font-size: 12px; color: #666;"> ${platformGuide.description}</p>
     `;
     document.getElementById('font-size-description').innerHTML = typographyHTML;
 
