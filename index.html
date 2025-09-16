@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TYPOUNIVERSE</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <a href="#" class="nav-link active" data-target="main-page">AI 타이포그래피 디자인가이드</a>
+                <a href="#" class="nav-link" data-target="lab-page">인터랙티브 실험실</a>
+            </div>
+            <div class="header-right">
+                <span class="typouniverse-logo">TYPOUNIVERSE</span>
+            </div>
+        </header>
+
+        <div id="main-page" class="main-page active">
+            <div class="main-content">
+                <div class="left-section">
+                    <div class="step-section" id="step01">
+                        <h2 class="step-title">STEP 01.</h2>
+                        <h3 class="section-header">서비스 목적 및 OS/플랫폼 선택</h3>
+                        <div class="dropdown-section">
+                            <div class="dropdown-wrapper" style="position: relative;">
+                                <div class="dropdown-item" id="service-dropdown">
+                                    <span id="service-text">서비스목적</span>
+                                    <span class="dropdown-arrow">▼</span>
+                                </div>
+                                <div class="dropdown-menu" id="service-menu"></div>
+                            </div>
+                            <div class="dropdown-wrapper" style="position: relative;">
+                                <div class="dropdown-item" id="platform-dropdown">
+                                    <span id="platform-text">OS/플랫폼</span>
+                                    <span class="dropdown-arrow">▼</span>
+                                </div>
+                                <div class="dropdown-menu" id="platform-menu"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-section hidden" id="step02">
+                        <h2 class="step-title">STEP 02.</h2>
+                        <h3 class="section-header">서비스 무드</h3>
+                        <div class="tone-selector">
+                            <div class="tone-labels">
+                                <span>SOFT</span>
+                                <span>HARD</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" class="slider" id="soft-hard-slider" min="0" max="100" value="50">
+                            </div>
+                            <div class="tone-bottom-labels">
+                                <span>STATIC</span>
+                                <span>DYNAMIC</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" class="slider" id="static-dynamic-slider" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-section hidden" id="step03">
+                        <h2 class="step-title">STEP 03.</h2>
+                        <h3 class="section-header">핵심 키워드</h3>
+                        <div class="keyword-tags" id="keyword-tags"></div>
+                        <div style="margin-top: 30px; display: none;" id="color-selection-wrapper">
+                            <h4 style="font-size: 14px; margin-bottom: 15px;">주조 색상 선택</h4>
+                            <div class="color-selection" id="color-selection"></div>
+                        </div>
+                        <button class="generate-btn hidden" id="generate-btn">AI 가이드 생성하기</button>
+                    </div>
+                </div>
+
+                <div class="right-section">
+                    <div class="step-section">
+                        <h2 class="step-title">AI Assistant.</h2>
+                        <h3 class="section-header">디자인 가이드라인</h3>
+                        <div class="guide-description" id="ai-message"></div>
+                        <div id="ai-report" style="display: none;">
+                            <div class="color-system-section">
+                                <h4 class="subsection-title">#Color system</h4>
+                                <div class="color-palette">
+                                    <div class="color-row">
+                                        <div class="color-box" id="primary-main"><div class="color-label">Primary color</div><div class="color-code"></div></div>
+                                        <div class="color-box" id="secondary-main"><div class="color-label">Secondary color</div><div class="color-code"></div></div>
+                                    </div>
+                                    <div class="color-row">
+                                        <div class="color-box" id="primary-light"><div class="color-label">P_Light</div><div class="color-code"></div></div>
+                                        <div class="color-box" id="secondary-light"><div class="color-label">S_Light</div><div class="color-code"></div></div>
+                                    </div>
+                                    <div class="color-row">
+                                        <div class="color-box" id="primary-dark"><div class="color-label">P_Dark</div><div class="color-code"></div></div>
+                                        <div class="color-box" id="secondary-dark"><div class="color-label">S_Dark</div><div class="color-code"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="typography-section">
+                                <h4 class="subsection-title">#Typography</h4>
+                                <div class="typography-content">
+                                    <div class="font-description">
+                                        <p><strong>텍스트 명도대비</strong></p>
+                                        <p id="contrast-description"></p>
+                                    </div>
+                                    <div class="font-specs">
+                                        <p><strong>폰트/색상 크기</strong></p>
+                                        <div id="font-size-description"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" class="interactive-button" data-target="lab-page">인터랙티브 실험실 바로 가기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-guidelines" id="guidelines" style="display: none;">
+                <div class="guideline-item">
+                    <h4 class="guideline-title">WCAG 2.1</h4>
+                    <p class="guideline-text">WCAG의 명도 대비 기준(AA: 4.5:1)은 단순히 저시력자만을 위한 것이 아닙니다. 낮은 대비는 일반 사용자조차도 안구 근육의 긴장도를 높여 시각적 피로도를 급격히 증가시키고, 정보 이해도를 저하시킵니다.</p>
+                </div>
+                <div class="guideline-item">
+                    <h4 class="guideline-title">Google Material Guide</h4>
+                    <p class="guideline-text">줄이 너무 길면(75자 이상) 다음 줄을 찾기 어려워 인지 부하가 증가하고, 너무 짧으면(45자 미만) 읽기 흐름이 깨집니다. 행간은 1.5배 이상으로 설정하여 시선의 '탈선 현상'을 방지하는 것이 중요합니다.</p>
+                </div>
+                <div class="guideline-item">
+                    <h4 class="guideline-title">HCI Principle</h4>
+                    <p class="guideline-text">글꼴 유형보다 글꼴 자체의 디자인 완성도(x-height, 글자 폭 등)가 가독성에 훨씬 더 큰 영향을 미칩니다. 알파벳 소문자 'x'의 높이를 의미하는 'x-height'가 큰 폰트일수록 동일한 포인트 크기에서도 훨씬 더 크고 명확하게 보입니다.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="lab-page" class="lab-page hidden">
+            <div class="main-content">
+                <div class="contrast-test">
+                    <h2 class="section-header-lab">색상 대비 실시간 테스트</h2>
+                    <div class="color-inputs">
+                        <div class="input-group">
+                            <label>Background color</label>
+                            <div class="color-input-wrapper">
+                                <input type="text" class="color-input" id="bg-color-input" value="#F5F5F5">
+                                <input type="color" class="color-picker" id="bg-color-picker" value="#F5F5F5">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Text color</label>
+                            <div class="color-input-wrapper">
+                                <input type="text" class="color-input" id="text-color-input" value="#333333">
+                                <input type="color" class="color-picker" id="text-color-picker" value="#333333">
+                            </div>
+                        </div>
+                         <div class="input-group">
+                            <label>Line height</label>
+                            <div class="slider-container lab-slider">
+                                <input type="range" class="slider" min="1" max="2.5" step="0.1" value="1.6" id="line-height-input">
+                                <div style="text-align: center; margin-top: 5px;"><span id="line-height-value">1.6</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contrast-display">
+                        <div class="contrast-ratio-wrapper">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">텍스트-배경 명도대비</div>
+                            <div class="contrast-ratio" id="contrast-ratio">12.36 : 1</div>
+                        </div>
+                        <div class="contrast-status-wrapper">
+                            <div class="contrast-status">
+                                <span class="status-badge pass" id="aa-status">AA</span>
+                                <span class="status-badge pass" id="aaa-status">AAA</span>
+                            </div>
+                            <p class="contrast-info" id="contrast-info">WCAG 2.1 기준, 일반 텍스트는 4.5:1(AA), 7:1(AAA) 이상이어야 합니다.<br>기준 통과시 초록색, 기준 미달시 빨간색으로 표시됩니다.</p>
+                        </div>
+                    </div>
+                    <div class="text-preview" id="text-preview">
+                        <div class="preview-text-1">일반 텍스트의 명도 대비는 최소 4.5:1 이상을 권장합니다.</div>
+                        <div class="preview-text-2">대형 텍스트는 일반 글자 18pt(24px) 이상</div>
+                        <div class="preview-text-3">굵은 글자 14pt(18.5px) 이상일 경우 배경과의 명도 대비를 3:1까지 낮출 수 있습니다.</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-font-units">
+                    <h2 class="section-header-lab">플랫폼별 폰트 단위 비교</h2>
+                    <div class="font-size-input-wrapper">
+                        <label for="font-size-input">Font size</label>
+                        <input type="number" id="font-size-input" value="16">
+                        <span>px (기준)</span>
+                    </div>
+                    <div class="font-unit-guide">
+                         💡 <strong>단위 이해하기:</strong> 웹은 주로 rem 단위를 사용해 반응형 디자인을 구현하고, iOS는 pt, Android는 sp 단위를 사용합니다. rem은 루트 폰트 크기(보통 16px)의 배수로 계산되어 일관된 비율을 유지합니다.
+                    </div>
+                    <div class="font-unit-cards">
+                        <div class="font-unit-card">
+                            <h4>pt (for iOS)</h4>
+                            <p class="font-example" id="pt-example">12.0pt</p>
+                            <p class="font-unit-desc">iOS의 논리적 단위, Dynamic Type 지원</p>
+                        </div>
+                        <div class="font-unit-card">
+                            <h4>rem (for Web)</h4>
+                            <p class="font-example" id="rem-example">1.00rem</p>
+                            <p class="font-unit-desc">반응형 디자인의 핵심, 루트 기준 상대값</p>
+                        </div>
+                        <div class="font-unit-card">
+                            <h4>sp (for Android)</h4>
+                            <p class="font-example" id="sp-example">16sp</p>
+                            <p class="font-unit-desc">사용자 설정 반영, 접근성 향상</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="universal-color-system">
+                    <h2 class="section-header-lab">색약자를 위한 유니버설 컬러 시스템</h2>
+                    <div class="simulator-display">
+                        <div class="simulator-card">
+                            <div class="simulator-title"> 일반 시각</div>
+                            <div class="color-palette-sim">
+                                <div class="palette-item" id="origBg"><span class="palette-label">배경</span><span class="hex-code-sim"></span></div>
+                                <div class="palette-item" id="origText"><span class="palette-label">텍스트</span><span class="hex-code-sim"></span></div>
+                            </div>
+                        </div>
+                        <div class="simulator-card">
+                            <div class="simulator-title"> 적록색약 시각</div>
+                            <div class="color-palette-sim">
+                                <div class="palette-item" id="simBg"><span class="palette-label">배경</span><span class="hex-code-sim"></span></div>
+                                <div class="palette-item" id="simText"><span class="palette-label">텍스트</span><span class="hex-code-sim"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="solutions-section">
+                        <div class="solution-header">AI 접근성 솔루션</div>
+                        <div id="solution-text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>
