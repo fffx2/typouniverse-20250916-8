@@ -255,13 +255,20 @@ function displayGeneratedGuide(data) {
 
     const platformKey = appState.platform.toLowerCase();
     const platformGuide = knowledgeBase.guidelines[platformKey] || knowledgeBase.guidelines.web;
-    
-    document.getElementById('contrast-description').innerHTML = `Primary 색상 배경 사용 시, 권장 텍스트 색상은 <strong>${data.accessibility.textColorOnPrimary}</strong>이며, 대비는 <strong>${data.accessibility.contrastRatio}</strong>입니다.`;
+
+    let contrastHTML;
+    if (platformGuide.contrast.includes('WCAG')) {
+        contrastHTML = `Primary 색상을 배경으로 사용할 경우, WCAG AA 기준을 충족하는 텍스트 색상은 <strong>${data.accessibility.textColorOnPrimary}</strong> 이며, 대비는 <strong>${data.accessibility.contrastRatio}</strong>로 ${platformGuide.contrast}합니다.`;
+    } else {
+        contrastHTML = `Primary 색상 배경 사용 시, 권장 텍스트 색상은 <strong>${data.accessibility.textColorOnPrimary}</strong> 이며, 대비는 <strong>'${platformGuide.contrast}'</strong>이 권장됩니다.`;
+    }
+    document.getElementById('contrast-description').innerHTML = contrastHTML;
     
     const typographyHTML = `
-        <p style="margin-bottom: 8px;"><strong>권장사항</strong> ${data.typography.bodySize} (본문) / ${data.typography.headlineSize} (제목)</p>
-        <p style="margin-bottom: 8px;"> ${platformGuide.source}</p>
-        <p style="font-size: 12px; color: #666;"> ${platformGuide.description}</p>
+        <p style="margin-bottom: 8px;"><strong>(기본)</strong> ${platformGuide.defaultSize} / <strong>(최소)</strong> ${platformGuide.minimumSize}</p>
+        <p style="margin-bottom: 12px;"><strong>(제목)</strong> ${platformGuide.typeScale.largeTitle || platformGuide.typeScale.headline} / <strong>(본문)</strong> ${platformGuide.typeScale.body}</p>
+        <p style="font-size: 13px; color: #555; line-height: 1.5;">${platformGuide.description}</p>
+        <p style="font-size: 12px; color: #888; margin-top: 8px;">출처: ${platformGuide.source}</p>
     `;
     document.getElementById('font-size-description').innerHTML = typographyHTML;
 
@@ -330,6 +337,7 @@ function updateLab() {
     updateSimulator(bgColor, textColor);
 }
 
+// ============== [수정된 핵심 함수] ==============
 function updateSimulator(bgColor, textColor) {
     const simBg = daltonizeColor(bgColor);
     const simText = daltonizeColor(textColor);
@@ -339,16 +347,19 @@ function updateSimulator(bgColor, textColor) {
     updatePaletteItem(document.getElementById('simBg'), simBg);
     updatePaletteItem(document.getElementById('simText'), simText);
 
+    const origRatio = calculateContrast(bgColor, textColor);
     const simRatio = calculateContrast(simBg, simText);
     const solutionText = document.getElementById('solution-text');
+    
     if (simRatio >= 4.5) {
-        solutionText.innerHTML = `✅ **양호**: 시뮬레이션 결과, 대비율이 <strong>${simRatio.toFixed(2)}:1</strong>로 충분하여 색상 구분에 문제가 없을 것으로 보입니다.`;
+        solutionText.innerHTML = `✅ **양호**: 일반 시각(<strong>${origRatio.toFixed(2)}:1</strong>)과 적록색약 시뮬레이션(<strong>${simRatio.toFixed(2)}:1</strong>) 모두 충분한 대비를 확보하여 색상 구분에 문제가 없을 것으로 보입니다.`;
         solutionText.style.color = '#2e7d32';
     } else {
-        solutionText.innerHTML = `⚠️ **주의**: 시뮬레이션 결과, 대비율이 <strong>${simRatio.toFixed(2)}:1</strong>로 낮아 색상 구분이 어려울 수 있습니다. 명도 차이를 더 확보하거나, 색상 외 다른 시각적 단서(아이콘, 굵기 등)를 함께 사용하는 것을 권장합니다.`;
+        solutionText.innerHTML = `⚠️ **주의**: 일반 시각에서는 대비율이 <strong>${origRatio.toFixed(2)}:1</strong>로 양호하지만, 적록색약 시뮬레이션 결과 <strong>${simRatio.toFixed(2)}:1</strong>로 낮아져 구분이 어려울 수 있습니다. 명도 차이를 더 확보하거나, 색상 외 다른 시각적 단서(아이콘, 굵기 등) 사용을 권장합니다.`;
         solutionText.style.color = '#d32f2f';
     }
 }
+
 
 function updatePaletteItem(element, color) {
     element.style.background = color;
@@ -384,10 +395,7 @@ function updateAIMessage(message) {
     typeWriter();
 }
 
-// ===================================================================================
-// HELPER FUNCTIONS
-// ===================================================================================
-
+// Helper Functions
 function getContrastingTextColor(hex) {
     if (!hex || hex.length < 4) return '#000000';
     const rgb = hexToRgb(hex);
@@ -395,13 +403,11 @@ function getContrastingTextColor(hex) {
     const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
     return luminance > 0.5 ? '#000000' : '#FFFFFF';
 }
-
 function calculateContrast(hex1, hex2) {
     const lum1 = getLuminance(hex1);
     const lum2 = getLuminance(hex2);
     return (Math.max(lum1, lum2) + 0.05) / (Math.min(lum1, lum2) + 0.05);
 }
-
 function getLuminance(hex) {
     const rgb = hexToRgb(hex);
     if (!rgb) return 0;
@@ -411,7 +417,6 @@ function getLuminance(hex) {
     });
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
-
 function hexToRgb(hex) {
     hex = hex.replace(/^#/, '');
     if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
@@ -419,7 +424,6 @@ function hexToRgb(hex) {
     if (isNaN(bigint)) return null;
     return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
 }
-
 function daltonizeColor(hex) {
     const rgb = hexToRgb(hex);
     if (!rgb) return '#000000';
@@ -430,17 +434,14 @@ function daltonizeColor(hex) {
     const toHex = c => ('0' + Math.round(Math.min(255, c)).toString(16)).slice(-2);
     return `#${toHex(simR)}${toHex(simG)}${toHex(simB)}`;
 }
-
 function lightenColor(color, percent) {
     const num = parseInt(color.slice(1), 16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt;
     return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
 }
-
 function darkenColor(color, percent) {
     const num = parseInt(color.slice(1), 16), amt = Math.round(2.55 * percent), R = (num >> 16) - amt, G = (num >> 8 & 0x00FF) - amt, B = (num & 0x0000FF) - amt;
     return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
 }
-
 function getComplementaryColor(hex){
     const rgb = hexToRgb(hex);
     if (!rgb) return '#000000';
